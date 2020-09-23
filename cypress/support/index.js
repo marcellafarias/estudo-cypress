@@ -21,7 +21,7 @@ import './commands'
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 
-before(() => {
+beforeEach(() => {
     //cy.server é para route e request
     //necessario antes de startar uma alias/variavel de ambiente
     //pois por boa prática não se usa const ou let para salvar variaveis
