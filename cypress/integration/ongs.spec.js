@@ -2,7 +2,7 @@
 ///<reference types="cypress" />
 
 describe('Ongs', () => {
-    it('devem realizar um cadastro', () => {
+    it.skip('devem realizar um cadastro', () => {
         cy.visit('http://localhost:3000/register');
         //cy.get - busca um elemento
         //.type insere um elemento
@@ -39,10 +39,44 @@ describe('Ongs', () => {
         })
     });
 
-    it('devem realizar um login no sistema', () => {
+    it.skip('devem realizar um login no sistema', () => {
     cy.visit('http://localhost:3000');
     //aqui reaproveita o metodo global de criar uma ong por request e passa no campo o id salvo da ong criada
     cy.get('input').type(Cypress.env('createdOngId'));
     cy.get('.button').click();
     });
+
+    it.skip('devem realizar o logout o sistema', () => {
+    cy.login();
+    cy.get('button').click();
+    });
+
+    it.skip('devem cadastrar novos casos', () => {
+       cy.login();
+       
+       cy.get('.button').click();
+
+        cy.get('[placeholder="Título do caso"]').type('Animal abandonado');
+        cy.get('textarea').type('Animal precisa ter onde morar.');
+        cy.get('[placeholder="Valor em reais"]').type('200');
+        
+        //monitorar uma chamada para fazer os asserts
+        //POST 200 /incidents
+        cy.route('POST', '**/incidents').as('newIncident');        
+        
+        cy.get('.button').click();
+
+        cy.wait('@newIncident').then((xhr) => {
+            expect(xhr.status).to.eq(200);
+            expect(xhr.response.body).has.property('id');
+            expect(xhr.response.body.id).is.not.null;
+        })
+    })
+
 });
+
+    it('devem excluir um caso', () =>{
+        cy.createNewIncident();
+        cy.login();
+        cy.get('ul > :nth-child(1) > button > svg').click();
+    })
