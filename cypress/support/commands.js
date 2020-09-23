@@ -46,4 +46,34 @@ Cypress.Commands.add("createOng",() =>{
         //essa é a declaração da variavel que salva o id da request para ser reaproveitado no teste
         Cypress.env('createdOngId', response.body.id);
     });
+
+    Cypress.Commands.add('login', () => { 
+        cy.visit('http://localhost:3000/profile'), {
+            //Aqui é um metodo que executa antes de carregar a tela
+            // seto uma variavel chamada browser
+            onBeforeLoad: (browser) => {
+                //chamo os metodos já prontos para interagir com o localStorage
+                browser.localStorage.setItem('ongId', Cypress.env('createdOngId'))
+                browser.localStorage.setItem('ongName', 'Gatos Queridos')
+            }
+        };
+    })
+})
+
+Cypress.Commands.add('createNewIncident', () =>{ 
+    cy.request({
+        method: 'POST',
+        url: 'http://localhost:3333/incidents',
+        headers: {'Authorization': `${ Cypress.env('createdOngId') }`, },
+        body: {
+            title: 'Gato Abandonado',
+            description: 'Gatos precisam de um novo lar',
+            value: '300'
+        }
+    }).then(response => {
+         expect(response.body.id).is.not.null
+        cy.log(response.body.id);
+        //essa é a declaração da variavel que salva o id da request para ser reaproveitado no teste
+        Cypress.env('createdIncidentId', response.body.id);
+    })
 })
